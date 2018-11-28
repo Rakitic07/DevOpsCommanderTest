@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="theme-color" content="#ffffff">
+
+  <title>IBM - DevOps Commander </title>
+
+
+  <link href="css/styles.css" rel="stylesheet">
+
+  <link href="css/home.component.css" rel="stylesheet" type="text/css">
+  <link href="css/login.component.css" rel="stylesheet"type="text/css">
+  <link href="css/bootstrap.min.css" rel="stylesheet"type="text/css">
+
+</head>
+
+<body ng-app="app" ng-controller="home as home">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script type="text/javascript">
+    angular
+      .module("app", [])
+      .config(
+        function ($httpProvider) {
+          $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        })
+      .controller(
+        "home",
+        function ($location, $scope, $window) {
+          var self = this;
+          $scope.localLogin = false;
+          console.log($location.absUrl()
+            .indexOf("error=true"))
+          if ($location &&
+            $location.absUrl().indexOf("error") >= 0) {
+            self.error = true;
+            $scope.localLogin = true;
+          }
+          var IBMDomain = "@in.ibm.com";
+          $scope.next = function () {
+            //validate emailID
+            if ($scope.username.length > 11) {
+              var emailDomain = $scope.username.slice(-11);
+              console.log("emailDomain: ", emailDomain);
+              if (emailDomain === IBMDomain) {
+                $window.location.href = '/dc/v1/oauth2/login/icp';
+              } else {
+                $scope.localLogin = true;
+              }
+            } else {
+              $scope.localLogin = true;
+            }
+          };
+          $scope.emailKeyPress = function (event) {
+            if (event.keyCode == 13) {
+              var signInEmailTxt = document.getElementById("signInEmail").value;
+              var signInPasswordTxt = document.getElementById("signInPassword").value;
+              if (signInEmailTxt.length > 0 && signInPasswordTxt.length > 0) {
+                $scope.submitForm();
+              } else if (document.getElementById("signInEmail").value.length > 0) {
+                $scope.next();
+              }
+            } else {
+              return;
+            }
+          }
+          $scope.submitForm = function () {
+            var signInEmailTxt = document.getElementById("signInEmail").value;
+            var signInPasswordTxt = document.getElementById("signInPassword").value;
+            if (signInEmailTxt.length > 0 && signInPasswordTxt.length > 0) {
+              document.getElementsByName("f")[0].setAttribute("action", "/dc/v1/oauth2/login");
+              document.getElementsByName("f")[0].submit();
+            }
+          }
+        });
+  </script>
+  <div class="row">
+    <div class="col-md-5 ao-home-col-left">
+      <div class="ao-home-left">
+        <section class="ao-home-left-sec" role="region" aria-label="Welcome to DevOps Commander">
+          <img title="Appops" class="ao-logo" src="images\dc_logo.svg" />
+          <!-- <h1 class="ao-app-heading">IBM DevOps Commander</h1> -->
+        </section>
+        <ul class="ulCaption">
+           
+          <li>Low touch</li>
+          <li>Flexible</li>
+          <li>Open Toolchain</li>
+          <li>DevSecOps</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-7 ao-home-col-right">
+      <div class="ao-home-right">
+        <section class="ao-home-right-sec" role="region" aria-label="learn more about hybrid portatl">
+          <!--<h1 class="ao-home-heading">Deliver to the market faster with quality</h1>-->
+          <h1 class="ao-home-heading"><i>Redefine software innovation for accelerated Digital Reinvention&#8482;</i></h1>
+          <div>
+            <!--Calling the postData() on button click-->
+
+            <form name='f' method='POST'>
+              <div class="flex-column signIn-content">
+                <div>
+                  <h2 class="signIn-title">
+                    <strong>Sign in</strong>
+                  </h2>
+                </div>
+                <div class="signIn-form-div">
+
+                  <label>
+                    <h3>Email
+                      <!-- <span class="mandatory-field">*</span> -->
+                    </h3>
+                  </label>
+                  <input ng-model="username" name="username" type="text" class="form-control" id="signInEmail" placeholder="Your email address (e.g. jdoe@in.ibm.com)"
+                    ng-keypress="emailKeyPress($event)">
+
+                  <div class="next-button-row" ng-hide="localLogin">
+                    <button type="button" class="ao-btn ao-primary-button" [disabled]="!signInEmail.valid" ng-click="next()">Next</button>
+                  </div>
+                  <div ng-show="localLogin">
+                    <label>
+                      <h3>Password
+                        <!-- <span class="mandatory-field">*</span> -->
+                      </h3>
+                    </label>
+                    <input ng-model="password" ng-keypress="emailKeyPress($event)" name="password" type="password" class="form-control" id="signInPassword"
+                      placeholder="Enter Password">
+
+                    <div class="button-row signIn-button-row">
+                      <button class="ao-btn ao-primary-button" [disabled]="!signInForm.valid" type="button" ng-click="submitForm()">Sign In</button>
+                    </div>
+                    <div ng-show="home.error">
+                      <p class="text-danger">
+                        Invalid Email and/or Password.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <br>
+
+              </div>
+            </form>
+            <!-- <p>or</p>
+            <p>
+              <mark>
+                <a href="/dc/v1/oauth2/login/github">
+                  <strong>Click here</strong>
+                </a>
+              </mark> to Sign In with your IBM w3id</p> -->
+          </div>
+
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
